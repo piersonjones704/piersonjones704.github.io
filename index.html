@@ -140,7 +140,11 @@ details.more[open] summary::before { content: "[-] "; }
 .cols ul { display: grid; gap: 10px; padding-left: 18px; list-style: square; }
 .cols li::marker { color: var(--ac); }
 
-.about { max-width: 760px; }
+.about { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 56px; align-items: start; max-width: 1040px; }
+.about-copy { max-width: 760px; }
+.about-photo { margin: 0; }
+.about-photo img { width: 100%; height: auto; border: 1px solid var(--line); }
+.about-photo figcaption { margin-top: 10px; text-align: center; font-family: var(--f-mono); font-size: 12px; letter-spacing: .04em; color: var(--mut); }
 .about-lead { font-size: clamp(18px, 2vw, 22px); line-height: 1.5; max-width: 52ch; }
 .facts { margin-top: 24px; display: grid; gap: 0; max-width: 720px; border-top: 1px solid var(--line); }
 .facts > div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 16px; padding-block: 12px; border-bottom: 1px solid var(--line); }
@@ -172,6 +176,8 @@ details.more[open] summary::before { content: "[-] "; }
 .foot { display: flex; justify-content: space-between; gap: 16px; padding-block: 28px 44px; border-top: 1px solid var(--line); font-family: var(--f-mono); font-size: 12.5px; color: var(--mut); }
 
 @media (max-width: 960px) {
+  .about { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .about-photo { max-width: 320px; }
   .hero { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-block: 48px 40px; }
   .proj-main { grid-template-columns: minmax(0, 1fr); gap: 24px; }
 }
@@ -257,8 +263,10 @@ details.more[open] summary::before { content: "[-] "; }
         <div><dt>School</dt><dd>Duke University</dd></div>
         <div><dt>Degrees</dt><dd>B.E. Electrical and Computer Engineering &amp; B.S. Computer Science, Aug 2025 to May 2029</dd></div>
         <div><dt>Standing</dt><dd>GPA 3.962, Dean's List with Distinction (Spring 2026)</dd></div>
+        <div><dt>Interests</dt><dd>Golf, fishing and building things that solve problems across industries</dd></div>
       </dl>
     </div>
+    <figure class="about-photo"><img src="assets/outdoors-fishing.jpg" alt="Pierson smiling in sunglasses and a light blue hooded shirt, holding a speckled trout on a boat on a sunny day" width="720" height="900" loading="lazy"><figcaption>Out on the water</figcaption></figure>
   </div>
 </section>
 
