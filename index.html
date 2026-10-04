@@ -53,6 +53,7 @@ nav { display: flex; flex-wrap: wrap; gap: 4px 22px; font-family: var(--f-mono);
 nav a { color: var(--mut); }
 nav a:hover { color: var(--tx); text-decoration: none; }
 
+.menu-btn { display: none; }
 .kicker { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--mut); }
 .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 56px; align-items: start; padding-block: 72px 64px; }
 .hero h1 { margin-top: 14px; font-weight: 650; font-stretch: 112%; font-size: clamp(38px, 6vw, 80px); line-height: .94; letter-spacing: -.03em; text-transform: uppercase; }
@@ -178,7 +179,17 @@ details.more[open] summary::before { content: "[-] "; }
   .id { gap: 18px; }
   .portrait { width: 104px; height: 116px; }
   .wordmark { font-size: 13px; }
-  nav a[href="#about"], nav a[href="#experience"] { display: none; }
+  .js .menu-btn { display: flex; flex-direction: column; justify-content: center; align-items: flex-end; gap: 5px; width: 44px; height: 44px; margin-right: -10px; padding: 0 10px; background: transparent; border: 0; cursor: pointer; }
+  .menu-btn span { display: block; width: 22px; height: 2px; background: var(--tx); transition: transform .2s ease, opacity .2s ease; }
+  .menu-btn:hover span { background: var(--ac); }
+  .menu-btn[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .menu-btn[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .js nav { display: none; }
+  .js .nav.open nav { display: flex; flex-direction: column; flex-wrap: nowrap; gap: 0; position: absolute; top: 100%; left: 0; right: 0; padding: 4px 20px 10px; background: var(--bg); border-bottom: 1px solid var(--line); font-size: 15px; }
+  .js .nav.open nav a { display: block; padding: 15px 0; color: var(--tx); border-top: 1px solid var(--line); }
+  .js .nav.open nav a:first-child { border-top: 0; }
+  .js .nav.open nav a:hover { color: var(--ac); }
   .skills > div { grid-template-columns: minmax(0, 1fr); gap: 6px; }
   .contact-list li { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
   .contact-list .k { grid-column: 1 / -1; }
@@ -193,7 +204,8 @@ details.more[open] summary::before { content: "[-] "; }
 <header class="nav">
   <div class="wrap nav-in">
     <a class="wordmark" href="#top" aria-label="Pierson Jones, top of page">Pierson Jones</a>
-    <nav aria-label="Sections"><a href="#projects">Projects</a><a href="#about">About</a><a href="#experience">Work</a><a href="#skills">Skills</a><a href="#contact">Contact</a></nav>
+    <nav id="site-nav" aria-label="Sections"><a href="#projects">Projects</a><a href="#about">About</a><a href="#experience">Work</a><a href="#skills">Skills</a><a href="#contact">Contact</a></nav>
+    <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
   </div>
 </header>
 
@@ -277,6 +289,7 @@ details.more[open] summary::before { content: "[-] "; }
 
 <script>
 (function () {
+  document.documentElement.classList.add('js');
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var smooth = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -337,6 +350,18 @@ details.more[open] summary::before { content: "[-] "; }
     if (el && el.classList.contains('proj')) { var d = $('details', el); if (d) d.open = true; }
   }
   window.addEventListener('hashchange', openFromHash); openFromHash();
+
+  // phone menu: three-line button opens the section list
+  (function () {
+    var bar = $('.nav'), btn = $('.menu-btn'), list = $('#site-nav');
+    if (!bar || !btn || !list) return;
+    function set(open) { bar.classList.toggle('open', open); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); }
+    btn.addEventListener('click', function () { set(!bar.classList.contains('open')); });
+    $$('a', list).concat($$('.wordmark', bar)).forEach(function (a) { a.addEventListener('click', function () { set(false); }); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && bar.classList.contains('open')) { set(false); btn.focus(); } });
+    document.addEventListener('click', function (e) { if (bar.classList.contains('open') && !bar.contains(e.target)) set(false); });
+    window.addEventListener('resize', function () { if (window.innerWidth > 640) set(false); });
+  })();
 
   // top links: always scroll to the very top of the page
   Array.prototype.forEach.call(document.querySelectorAll('a[href="#top"]'), function (a) {
